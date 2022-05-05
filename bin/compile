@@ -100,6 +100,34 @@ for DEB in $(ls -1 $APT_CACHE_DIR/archives/*.deb); do
   dpkg -x $DEB $BUILD_DIR/.apt/
 done
 
+##########
+###
+###  MULESOFT CUSTOM CODE
+###
+##########
+
+topic "Getting mulesoft flex gateway PUBLIC KEY"
+
+curl -XGET https://flex-packages.anypoint.mulesoft.com/ubuntu/pubkey.gpg | sudo apt-key add -
+
+tpoic "Adding mulesoft repo LIST "
+echo "deb https://flex-packages.anypoint.mulesoft.com/ubuntu $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/mulesoft.list
+sudo apt update
+
+topic "Installing mulesoft flex gateway"
+
+sudo apt install -y flex-gateway
+
+topic "Done installing Mulesoft Flex Gateway"
+
+##########
+###
+###  MULESOFT CUSTOM CODE
+###
+##########
+
+
+
 topic "Writing profile script"
 mkdir -p $BUILD_DIR/.profile.d
 cat <<EOF >$BUILD_DIR/.profile.d/000_apt.sh
