@@ -108,15 +108,15 @@ done
 
 topic "Getting mulesoft flex gateway PUBLIC KEY"
 
-curl -XGET https://flex-packages.anypoint.mulesoft.com/ubuntu/pubkey.gpg | sudo apt-key add -
+curl -XGET https://flex-packages.anypoint.mulesoft.com/ubuntu/pubkey.gpg |  apt-key add -
 
 tpoic "Adding mulesoft repo LIST "
-echo "deb https://flex-packages.anypoint.mulesoft.com/ubuntu $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/mulesoft.list
-sudo apt update
+echo "deb https://flex-packages.anypoint.mulesoft.com/ubuntu $(lsb_release -cs) main" |  tee /etc/apt/sources.list.d/mulesoft.list
+ apt update
 
 topic "Installing mulesoft flex gateway"
 
-sudo apt install -y flex-gateway
+ apt install -y flex-gateway
 
 topic "Done installing Mulesoft Flex Gateway"
 
