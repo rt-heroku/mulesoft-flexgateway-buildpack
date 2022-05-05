@@ -106,21 +106,30 @@ done
 ###
 ##########
 MULE_REPO_KEY=$BUILD_DIR/.apt/keys/mulesoft.gpg
+MULE_LIST=$BUILD_DIR/.apt/sources.list.d/mulesoft.list
+
 topic "Getting mulesoft flex gateway PUBLIC KEY"
 topic "Preparing to install in $BUILD_DIR "
 curl -XGET https://flex-packages.anypoint.mulesoft.com/ubuntu/pubkey.gpg > $MULE_REPO_KEY
 
+topic "Contents of file MULE_REPO_KEY=$MULE_REPO_KEY"
+cat $MULE_REPO_KEY
+
 # apt-key add -
 
 tpoic "Adding mulesoft repo LIST "
-echo "deb [signed-by=$MULE_REPO_KEY] https://flex-packages.anypoint.mulesoft.com/ubuntu $(lsb_release -cs) main" |  tee $BUILD_DIR/.apt/sources.list.d/mulesoft.list
+echo "deb [signed-by=$MULE_REPO_KEY] https://flex-packages.anypoint.mulesoft.com/ubuntu $(lsb_release -cs) main" |  tee $MULE_LIST
+
+topic "Contents of file MULE_LIST= $MULE_LIST"
+cat $MULE_LIST
+
+topic "Updating repository"
 apt update
 
 topic "Installing mulesoft flex gateway"
-
 apt install -y flex-gateway
 
-topic "Done installing Mulesoft Flex Gateway"
+topic "Done installing Mulesoft Flex Gateway!!"
 
 ##########
 ###
