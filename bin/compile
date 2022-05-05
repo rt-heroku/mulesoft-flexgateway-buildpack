@@ -117,7 +117,7 @@ cat $MULE_REPO_KEY
 
 # apt-key add -
 
-tpoic "Adding mulesoft repo LIST "
+topic "Adding mulesoft repo LIST "
 echo "deb [signed-by=$MULE_REPO_KEY] https://flex-packages.anypoint.mulesoft.com/ubuntu $(lsb_release -cs) main" |  tee $APT_SOURCES
 
 topic "Contents of file APT_SOURCES= $APT_SOURCES"
