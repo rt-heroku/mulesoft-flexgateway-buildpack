@@ -110,24 +110,22 @@ MULE_REPO_KEY=$APT_CACHE_DIR/mulesoft.gpg
 topic "Getting mulesoft flex gateway PUBLIC KEY"
 topic "Preparing to install in $BUILD_DIR "
 topic "Downloading public key into $MULE_REPO_KEY"
-curl -XGET https://flex-packages.anypoint.mulesoft.com/ubuntu/pubkey.gpg | tee $MULE_REPO_KEY
 
-topic "Contents of file MULE_REPO_KEY=$MULE_REPO_KEY"
-cat $MULE_REPO_KEY
-
-# apt-key add -
+#Download the public key and instead of installing it store it and reference it in the package.
+curl -XGET https://flex-packages.anypoint.mulesoft.com/ubuntu/pubkey.gpg | gpg --dearmor | tee $MULE_REPO_KEY
 
 topic "Adding mulesoft repo LIST "
-echo "deb [signed-by=$MULE_REPO_KEY] https://flex-packages.anypoint.mulesoft.com/ubuntu $(lsb_release -cs) main" |  tee $APT_SOURCES
+#Reference the key in the source list
+echo "deb [signed-by=$MULE_REPO_KEY] https://flex-packages.anypoint.mulesoft.com/ubuntu $(lsb_release -cs) main" >> $APT_SOURCES
 
 topic "Contents of file APT_SOURCES= $APT_SOURCES"
 cat $APT_SOURCES
 
 topic "Updating repository"
-apt update
+apt update $APT_OPTIONS -y $APT_FORCE_YES
 
 topic "Installing mulesoft flex gateway"
-apt install -y flex-gateway
+apt install $APT_OPTIONS -y $APT_FORCE_YES flex-gateway
 
 topic "Done installing Mulesoft Flex Gateway!!"
 
