@@ -73,6 +73,10 @@ else
   fi
 fi
 
+MULE_REPO_KEY=$APT_CACHE_DIR/mulesoft.gpg
+#Download the public key and instead of installing it store it and reference it in the package.
+curl -XGET https://flex-packages.anypoint.mulesoft.com/ubuntu/pubkey.gpg | gpg --dearmor | tee $MULE_REPO_KEY
+
 APT_OPTIONS="-o debug::nolocking=true -o dir::cache=$APT_CACHE_DIR -o dir::state=$APT_STATE_DIR"
 # Override the use of /etc/apt/sources.list (sourcelist) and /etc/apt/sources.list.d/* (sourceparts).
 APT_OPTIONS="$APT_OPTIONS -o dir::etc::sourcelist=$APT_SOURCES -o dir::etc::sourceparts=/dev/null"
@@ -86,9 +90,11 @@ for PACKAGE in $(cat $BUILD_DIR/Aptfile | grep -v -s -e '^#' | grep -v -s -e "^:
     PACKAGE_FILE=$APT_CACHE_DIR/archives/$PACKAGE_NAME.deb
 
     topic "Fetching $PACKAGE"
+    topic "curl --silent --show-error --fail -L -z $PACKAGE_FILE -o $PACKAGE_FILE $PACKAGE 2>&1"
     curl --silent --show-error --fail -L -z $PACKAGE_FILE -o $PACKAGE_FILE $PACKAGE 2>&1 | indent
   else
     topic "Fetching .debs for $PACKAGE"
+    topic "apt-get $APT_OPTIONS -y $APT_FORCE_YES -d install --reinstall $PACKAGE"
     apt-get $APT_OPTIONS -y $APT_FORCE_YES -d install --reinstall $PACKAGE | indent
   fi
 done
@@ -105,29 +111,29 @@ done
 ###  MULESOFT CUSTOM CODE
 ###
 ##########
-MULE_REPO_KEY=$APT_CACHE_DIR/mulesoft.gpg
+#MULE_REPO_KEY=$APT_CACHE_DIR/mulesoft.gpg
 
-topic "Getting mulesoft flex gateway PUBLIC KEY"
-topic "Preparing to install in $BUILD_DIR "
-topic "Downloading public key into $MULE_REPO_KEY"
+#topic "Getting mulesoft flex gateway PUBLIC KEY"
+#topic "Preparing to install in $BUILD_DIR "
+#topic "Downloading public key into $MULE_REPO_KEY"
 
-#Download the public key and instead of installing it store it and reference it in the package.
-curl -XGET https://flex-packages.anypoint.mulesoft.com/ubuntu/pubkey.gpg | gpg --dearmor | tee $MULE_REPO_KEY
+##Download the public key and instead of installing it store it and reference it in the package.
+#curl -XGET https://flex-packages.anypoint.mulesoft.com/ubuntu/pubkey.gpg | gpg --dearmor | tee $MULE_REPO_KEY
 
-topic "Adding mulesoft repo LIST "
-#Reference the key in the source list
-echo "deb [signed-by=$MULE_REPO_KEY] https://flex-packages.anypoint.mulesoft.com/ubuntu $(lsb_release -cs) main" >> $APT_SOURCES
+#topic "Adding mulesoft repo LIST "
+##Reference the key in the source list
+#echo "deb [signed-by=$MULE_REPO_KEY] https://flex-packages.anypoint.mulesoft.com/ubuntu $(lsb_release -cs) main" >> $APT_SOURCES
 
-topic "Contents of file APT_SOURCES= $APT_SOURCES"
-cat $APT_SOURCES
+#topic "Contents of file APT_SOURCES= $APT_SOURCES"
+#cat $APT_SOURCES
 
-topic "Updating repository"
-apt update $APT_OPTIONS -y $APT_FORCE_YES
+#topic "Updating repository"
+#apt update $APT_OPTIONS -y $APT_FORCE_YES
 
-topic "Installing mulesoft flex gateway"
-apt install $APT_OPTIONS -y $APT_FORCE_YES flex-gateway
+#topic "Installing mulesoft flex gateway"
+#apt install $APT_OPTIONS -y $APT_FORCE_YES flex-gateway
 
-topic "Done installing Mulesoft Flex Gateway!!"
+#topic "Done installing Mulesoft Flex Gateway!!"
 
 ##########
 ###
