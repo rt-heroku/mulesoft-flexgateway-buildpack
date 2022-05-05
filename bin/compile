@@ -105,18 +105,20 @@ done
 ###  MULESOFT CUSTOM CODE
 ###
 ##########
-
+MULE_REPO_KEY=$BUILD_DIR/.apt/keys/mulesoft.gpg
 topic "Getting mulesoft flex gateway PUBLIC KEY"
+topic "Preparing to install in $BUILD_DIR "
+curl -XGET https://flex-packages.anypoint.mulesoft.com/ubuntu/pubkey.gpg > $MULE_REPO_KEY
 
-curl -XGET https://flex-packages.anypoint.mulesoft.com/ubuntu/pubkey.gpg |  apt-key add -
+# apt-key add -
 
 tpoic "Adding mulesoft repo LIST "
-echo "deb https://flex-packages.anypoint.mulesoft.com/ubuntu $(lsb_release -cs) main" |  tee /etc/apt/sources.list.d/mulesoft.list
- apt update
+echo "deb [signed-by=$MULE_REPO_KEY] https://flex-packages.anypoint.mulesoft.com/ubuntu $(lsb_release -cs) main" |  tee $BUILD_DIR/.apt/sources.list.d/mulesoft.list
+apt update
 
 topic "Installing mulesoft flex gateway"
 
- apt install -y flex-gateway
+apt install -y flex-gateway
 
 topic "Done installing Mulesoft Flex Gateway"
 
